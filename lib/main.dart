@@ -237,8 +237,8 @@ class _MyAppState extends State<MyApp> {
               margin: const EdgeInsets.all(5),
               child: TextField(
                 autofocus: true,
-                cursorColor: Colors.grey,
-                style: const TextStyle(color: Colors.grey),
+                cursorColor: Colors.white70,
+                style: const TextStyle(color: Colors.white),
                 textAlign: TextAlign.center,
                 controller: inputControllerPlace,
                 decoration: const InputDecoration(
@@ -333,17 +333,15 @@ class _MyAppState extends State<MyApp> {
   }
 
   Widget weatherIconCode(String weatherCode) {
-    return Container(
-      child: Column(
-        children: [
-          BoxedIcon(
-            WeatherIcons.fromString(weatherCode,
-                // Fallback is optional, throws if not found, and not supplied.
-                fallback: WeatherIcons.na),
-          ),
-          Text("Icon for '$weatherCode'"),
-        ],
-      ),
+    return Column(
+      children: [
+        BoxedIcon(
+          WeatherIcons.fromString(weatherCode,
+              // Fallback is optional, throws if not found, and not supplied.
+              fallback: WeatherIcons.na),
+        ),
+        Text("Icon for '$weatherCode'"),
+      ],
     );
   }
 
