@@ -363,9 +363,9 @@ class _MyAppState extends State<MyApp> {
               appBar: AppBar(
                 title: const Text('Weather Example App'),
                 backgroundColor: Colors.deepPurpleAccent,
-                leading: const IconButton(
-                  onPressed: null,
-                  icon: Icon(Icons.menu),
+                leading: IconButton(
+                  onPressed: drawerMenu,
+                  icon: const Icon(Icons.menu),
                 ),
               ),
               body: Column(
@@ -535,5 +535,15 @@ class _MyAppState extends State<MyApp> {
               ),
             ),
           );
+  }
+
+  Widget drawerMenu() {
+    return Drawer(
+      child: Column(
+        children: [
+          const Text("data from openweathermap"),
+        ],
+      ),
+    );
   }
 }
