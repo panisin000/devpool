@@ -360,6 +360,7 @@ class _MyAppState extends State<MyApp> {
               primarySwatch: Colors.deepPurple,
             ),
             home: Scaffold(
+              // drawer: drawer,
               appBar: AppBar(
                 title: const Text('Weather Example App'),
                 backgroundColor: Colors.deepPurpleAccent,
@@ -451,8 +452,8 @@ class _MyAppState extends State<MyApp> {
                                             ),
                                             const Padding(
                                                 padding: EdgeInsets.only(
-                                                    left: 10,
-                                                    right: 10,
+                                                    left: 5,
+                                                    right: 5,
                                                     top: 20)),
                                             Text(
                                               "Max:${_data[0].tempMax!.celsius!.toStringAsFixed(1)}",
@@ -463,7 +464,7 @@ class _MyAppState extends State<MyApp> {
                                           ],
                                         ),
                                         const Padding(
-                                            padding: EdgeInsets.only(top: 10)),
+                                            padding: EdgeInsets.only(top: 5)),
                                         Text(
                                           "Feel like ${_data[0].tempFeelsLike!.celsius!.toStringAsFixed(1)}",
                                           style: const TextStyle(
@@ -472,6 +473,8 @@ class _MyAppState extends State<MyApp> {
                                         ),
                                       ],
                                     ),
+                                    const Padding(
+                                        padding: EdgeInsets.only(left: 10)),
                                     Column(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
@@ -479,7 +482,7 @@ class _MyAppState extends State<MyApp> {
                                         Text(
                                           "${_data[0].weatherDescription}",
                                           style: const TextStyle(
-                                              fontSize: 30,
+                                              fontSize: 25,
                                               color: Colors.white),
                                         ),
                                         Image.network(
