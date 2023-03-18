@@ -241,17 +241,25 @@ class _MyAppState extends State<MyApp> {
                 style: const TextStyle(color: Colors.white),
                 textAlign: TextAlign.center,
                 controller: inputControllerPlace,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                      borderSide:
+                          const BorderSide(width: 3, color: Colors.deepPurple),
+                      borderRadius: BorderRadius.circular(20)),
                   hintText: 'กรูณาใส่ชื่อเมือง',
-                  hintStyle: TextStyle(color: Colors.white70),
-                  suffixIcon: Icon(
+                  hintStyle: const TextStyle(color: Colors.white70),
+                  suffixIcon: const Icon(
                     Icons.find_in_page,
                     color: Colors.deepPurpleAccent,
                   ),
                   enabledBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(width: 3, color: Colors.deepPurpleAccent)),
+                      borderSide: const BorderSide(
+                          width: 3, color: Colors.deepPurpleAccent),
+                      borderRadius: BorderRadius.circular(20)),
+                  // disabledBorder: OutlineInputBorder(
+                  //     borderSide:
+                  //         BorderSide(width: 3, color: Colors.deepPurpleAccent),
+                  //     borderRadius: BorderRadius.circular(20)),
                 ),
                 onChanged: (e) {
                   place = e;
@@ -293,8 +301,7 @@ class _MyAppState extends State<MyApp> {
               queryWeather(true);
             },
             style: ButtonStyle(
-                backgroundColor:
-                    MaterialStateProperty.all(Colors.deepPurpleAccent)),
+                backgroundColor: MaterialStateProperty.all(Colors.deepPurple)),
             child: const Text(
               'local weather',
               style: TextStyle(color: Colors.white),
@@ -308,8 +315,7 @@ class _MyAppState extends State<MyApp> {
               queryWeather();
             },
             style: ButtonStyle(
-                backgroundColor:
-                    MaterialStateProperty.all(Colors.deepPurpleAccent)),
+                backgroundColor: MaterialStateProperty.all(Colors.deepPurple)),
             child: const Text(
               'Find weather',
               style: TextStyle(color: Colors.white),
@@ -355,114 +361,162 @@ class _MyAppState extends State<MyApp> {
             ),
             home: Scaffold(
               appBar: AppBar(
-                  title: const Text('Weather Example App'),
-                  backgroundColor: Colors.deepPurpleAccent),
-              body: Container(
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment(0.8, 1),
-                    colors: <Color>[
-                      Color(0xffe16b5c),
-                      Color.fromARGB(255, 84, 0, 92),
-
-                      // Color(0xfff39060),
-                    ], // Gradient from https://learnui.design/tools/gradient-generator.html
-                    tileMode: TileMode.mirror,
-                  ),
+                title: const Text('Weather Example App'),
+                backgroundColor: Colors.deepPurpleAccent,
+                leading: const IconButton(
+                  onPressed: null,
+                  icon: Icon(Icons.menu),
                 ),
-                child: Column(
-                  children: <Widget>[
-                    _coordinateInputs(),
-                    _buttons(),
-                    // const Text(
-                    //   'Output:',
-                    //   style: TextStyle(fontSize: 20,color: Colors.white),
-                    // ),
-                    const Divider(
-                      height: 20.0,
-                      thickness: 2.0,
-                    ),
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: [
-                          _state == AppState.FINISHED_DOWNLOADING
-                              ? Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    "${_data[0].areaName}",
-                                    style: const TextStyle(
-                                        fontSize: 40, color: Colors.white),
-                                  ),
-                                )
-                              : Container(),
-                          _state == AppState.FINISHED_DOWNLOADING
-                              ? Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    "${_data[0].country}",
-                                    style: const TextStyle(
-                                        fontSize: 40, color: Colors.white),
-                                  ),
-                                )
-                              : Container(),
-                        ],
+              ),
+              body: Column(
+                children: [
+                  Container(
+                    height: 400,
+                    // width: size.width,
+                    margin: const EdgeInsets.only(right: 10, left: 10),
+                    decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.horizontal(
+                          left: Radius.circular(20),
+                          right: Radius.circular(20)),
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: <Color>[
+                          Color(0xff3fa2fa),
+                          Color(0xff955cd1),
+                        ], // Gradient from https://learnui.design/tools/gradient-generator.html
+                        tileMode: TileMode.mirror,
                       ),
                     ),
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          _state == AppState.FINISHED_DOWNLOADING
-                              ? Text(
-                                  "${_data[0].temperature!.celsius!.toStringAsFixed(1)} C",
-                                  style: const TextStyle(
-                                      fontSize: 40, color: Colors.white),
-                                )
-                              : Container(),
-                          _state == AppState.FINISHED_DOWNLOADING
-                              ? Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
+                    child: Column(
+                      children: <Widget>[
+                        _coordinateInputs(),
+                        _buttons(),
+                        // const Text(
+                        //   'Output:',
+                        //   style: TextStyle(fontSize: 20,color: Colors.white),
+                        // ),
+                        const Divider(
+                          height: 20.0,
+                          thickness: 2.0,
+                        ),
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: _state == AppState.FINISHED_DOWNLOADING
+                              ? Row(
                                   children: [
-                                    Image.network(
-                                        'http://openweathermap.org/img/w/${_data[0].weatherIcon}.png',
-                                        height: 100,
-                                        fit: BoxFit.cover),
-                                    Text(
-                                      "${_data[0].weatherDescription}",
-                                      style: const TextStyle(
-                                          fontSize: 30, color: Colors.white),
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text(
+                                        "${_data[0].areaName},",
+                                        style: const TextStyle(
+                                            fontSize: 40, color: Colors.white),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text(
+                                        "${_data[0].country}",
+                                        style: const TextStyle(
+                                            fontSize: 40, color: Colors.white),
+                                      ),
                                     ),
                                   ],
                                 )
                               : Container(),
-                        ],
-                      ),
-                    ),
-                    _state == AppState.FINISHED_DOWNLOADING
-                        ? Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              "$outputDate",
-                              style: const TextStyle(
-                                  fontSize: 20, color: Colors.white),
-                            ),
-                          )
-                        : Container(),
-                    IconButton(
-                        // Display a Wind icon facing towards east
-                        icon: WindIcon.towards_n,
-                        iconSize: 30,
-                        onPressed: () {}),
-                    // weatherIconCode("${_data[0].weatherIcon}"),
-                    // Text("$outputDate"),
-                    Expanded(child: _resultView()),
+                        ),
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: _state == AppState.FINISHED_DOWNLOADING
+                              ? Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Column(
+                                      children: [
+                                        Text(
+                                          "${_data[0].temperature!.celsius!.toStringAsFixed(1)} C",
+                                          style: const TextStyle(
+                                              fontSize: 46,
+                                              color: Colors.white),
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          children: [
+                                            Text(
+                                              "Min:${_data[0].tempMin!.celsius!.toStringAsFixed(1)}",
+                                              style: const TextStyle(
+                                                  fontSize: 20,
+                                                  color: Colors.white),
+                                            ),
+                                            const Padding(
+                                                padding: EdgeInsets.only(
+                                                    left: 10,
+                                                    right: 10,
+                                                    top: 20)),
+                                            Text(
+                                              "Max:${_data[0].tempMax!.celsius!.toStringAsFixed(1)}",
+                                              style: const TextStyle(
+                                                  fontSize: 20,
+                                                  color: Colors.white),
+                                            ),
+                                          ],
+                                        ),
+                                        const Padding(
+                                            padding: EdgeInsets.only(top: 10)),
+                                        Text(
+                                          "Feel like ${_data[0].tempFeelsLike!.celsius!.toStringAsFixed(1)}",
+                                          style: const TextStyle(
+                                              fontSize: 20,
+                                              color: Colors.white),
+                                        ),
+                                      ],
+                                    ),
+                                    Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          "${_data[0].weatherDescription}",
+                                          style: const TextStyle(
+                                              fontSize: 30,
+                                              color: Colors.white),
+                                        ),
+                                        Image.network(
+                                            'http://openweathermap.org/img/w/${_data[0].weatherIcon}.png',
+                                            height: 100,
+                                            fit: BoxFit.cover),
+                                      ],
+                                    )
+                                  ],
+                                )
+                              : Container(),
+                        ),
+                        _state == AppState.FINISHED_DOWNLOADING
+                            ? Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  "$outputDate",
+                                  style: const TextStyle(
+                                      fontSize: 20, color: Colors.white),
+                                ),
+                              )
+                            : Container(),
+                        // IconButton(
+                        //     // Display a Wind icon facing towards east
+                        //     icon: WindIcon.towards_n,
+                        //     iconSize: 30,
+                        //     onPressed: () {}),
+                        // weatherIconCode("${_data[0].weatherIcon}"),
+                        // Text("$outputDate"),
 
-                    // Expanded(child: Text(txtError)),
-                  ],
-                ),
+                        // Expanded(child: Text(txtError)),
+                      ],
+                    ),
+                  ),
+                  const Divider(),
+                  Expanded(child: _resultView()),
+                ],
               ),
             ),
           )
