@@ -164,7 +164,7 @@ class _MyAppState extends State<MyApp> {
           _state = AppState.FINISHED_DOWNLOADING;
         });
       } on OpenWeatherAPIException catch (e) {
-        print("error==>${e}");
+        print("error==>$e");
         setState(() {
           _data = [];
           // txtError = "city not found";
@@ -258,7 +258,7 @@ class _MyAppState extends State<MyApp> {
 
   Widget contentDownloading() {
     return Container(
-      margin: const EdgeInsets.all(25),
+      margin: const EdgeInsets.all(5),
       child: Column(children: [
         const Text(
           'Loading Weather...',
@@ -276,9 +276,9 @@ class _MyAppState extends State<MyApp> {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: const <Widget>[
+        children: <Widget>[
           Text(
-            'City not found',
+            'City ($place) not found',
             style: TextStyle(fontSize: 40),
           ),
         ],
@@ -390,6 +390,7 @@ class _MyAppState extends State<MyApp> {
           child: TextButton(
             onPressed: () {
               queryWeather();
+              inputControllerPlace.clear();
             },
             style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all(Colors.deepPurple)),
@@ -464,211 +465,223 @@ class _MyAppState extends State<MyApp> {
               body: Column(
                 children: [
                   Container(
-                    height: 440,
-                    // width: size.width,
-                    margin: const EdgeInsets.only(right: 10, left: 10),
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.horizontal(
-                          left: Radius.circular(20),
-                          right: Radius.circular(20)),
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: <Color>[
-                          Color(0xff3fa2fa),
-                          Color(0xff955cd1),
-                        ], // Gradient from https://learnui.design/tools/gradient-generator.html
-                        tileMode: TileMode.mirror,
+                      height: 440,
+                      // width: size.width,
+                      margin: const EdgeInsets.only(right: 10, left: 10),
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.horizontal(
+                            left: Radius.circular(20),
+                            right: Radius.circular(20)),
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: <Color>[
+                            Color(0xff3fa2fa),
+                            Color(0xff955cd1),
+                          ], // Gradient from https://learnui.design/tools/gradient-generator.html
+                          tileMode: TileMode.mirror,
+                        ),
                       ),
-                    ),
-                    child: _state == AppState.FINISHED_DOWNLOADING
-                        ? Column(
-                            children: <Widget>[
-                              _coordinateInputs(),
-                              _buttons(),
-                              // const Text(
-                              //   'Output:',
-                              //   style: TextStyle(fontSize: 20,color: Colors.white),
-                              // ),
-                              const Divider(
-                                // height: 20.0,
-                                thickness: 2.0,
-                              ),
-                              SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Row(
+                      child: Column(
+                        children: <Widget>[
+                          _coordinateInputs(),
+                          _buttons(),
+                          // const Text(
+                          //   'Output:',
+                          //   style: TextStyle(fontSize: 20,color: Colors.white),
+                          // ),
+                          _state == AppState.FINISHED_DOWNLOADING
+                              ? Column(
                                   children: [
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text(
-                                        "${_data[0].areaName},",
-                                        style: const TextStyle(
-                                            fontSize: 40, color: Colors.white),
+                                    const Divider(
+                                      // height: 20.0,
+                                      thickness: 2.0,
+                                    ),
+                                    SingleChildScrollView(
+                                      scrollDirection: Axis.horizontal,
+                                      child: Row(
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text(
+                                              "${_data[0].areaName},",
+                                              style: const TextStyle(
+                                                  fontSize: 40,
+                                                  color: Colors.white),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text(
+                                              "${_data[0].country}",
+                                              style: const TextStyle(
+                                                  fontSize: 40,
+                                                  color: Colors.white),
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text(
-                                        "${_data[0].country}",
-                                        style: const TextStyle(
-                                            fontSize: 40, color: Colors.white),
+                                    SingleChildScrollView(
+                                      scrollDirection: Axis.horizontal,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Column(
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  const IconButton(
+                                                    onPressed: null,
+                                                    icon: Icon(Icons
+                                                        .thermostat_outlined),
+                                                    iconSize: 50,
+                                                    color: Colors.white,
+                                                  ),
+                                                  Text(
+                                                    "${_data[0].temperature!.celsius!.toStringAsFixed(1)} C",
+                                                    style: const TextStyle(
+                                                        fontSize: 46,
+                                                        color: Colors.white),
+                                                  ),
+                                                  const IconButton(
+                                                    onPressed: null,
+                                                    icon:
+                                                        Icon(Icons.water_drop),
+                                                    iconSize: 40,
+                                                    color: Colors.white,
+                                                  ),
+                                                  Text(
+                                                    "${_data[0].humidity!.toStringAsFixed(1)} %",
+                                                    style: const TextStyle(
+                                                        fontSize: 46,
+                                                        color: Colors.white),
+                                                  ),
+                                                ],
+                                              ),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceEvenly,
+                                                children: [
+                                                  Text(
+                                                    "Min:${_data[0].tempMin!.celsius!.toStringAsFixed(1)}",
+                                                    style: const TextStyle(
+                                                        fontSize: 20,
+                                                        color: Colors.white),
+                                                  ),
+                                                  const Padding(
+                                                      padding: EdgeInsets.only(
+                                                          left: 5,
+                                                          right: 5,
+                                                          top: 20)),
+                                                  Text(
+                                                    "Max:${_data[0].tempMax!.celsius!.toStringAsFixed(1)}",
+                                                    style: const TextStyle(
+                                                        fontSize: 20,
+                                                        color: Colors.white),
+                                                  ),
+                                                ],
+                                              ),
+                                              const Padding(
+                                                  padding:
+                                                      EdgeInsets.only(top: 5)),
+                                              Row(
+                                                children: [
+                                                  Text(
+                                                    "Feel like ${_data[0].tempFeelsLike!.celsius!.toStringAsFixed(1)}",
+                                                    style: const TextStyle(
+                                                        fontSize: 20,
+                                                        color: Colors.white),
+                                                  ),
+                                                  const Padding(
+                                                      padding: EdgeInsets.only(
+                                                          left: 10)),
+                                                  const IconButton(
+                                                    onPressed: null,
+                                                    icon: Icon(
+                                                        Icons.air_outlined),
+                                                    iconSize: 40,
+                                                    color: Colors.white,
+                                                  ),
+                                                  Text(
+                                                    "${_data[0].windSpeed}",
+                                                    style: const TextStyle(
+                                                        fontSize: 20,
+                                                        color: Colors.white),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                          const Padding(
+                                              padding:
+                                                  EdgeInsets.only(left: 10)),
+                                          Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                "${_data[0].weatherDescription}",
+                                                style: const TextStyle(
+                                                    fontSize: 25,
+                                                    color: Colors.white),
+                                              ),
+                                              Image.network(
+                                                  'http://openweathermap.org/img/w/${_data[0].weatherIcon}.png',
+                                                  height: 100,
+                                                  fit: BoxFit.cover),
+                                            ],
+                                          )
+                                        ],
                                       ),
                                     ),
-                                  ],
-                                ),
-                              ),
-                              SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Column(
-                                      children: [
-                                        Row(
-                                          children: [
-                                            const IconButton(
-                                              onPressed: null,
-                                              icon: Icon(
-                                                  Icons.thermostat_outlined),
-                                              iconSize: 50,
-                                              color: Colors.white,
-                                            ),
-                                            Text(
-                                              "${_data[0].temperature!.celsius!.toStringAsFixed(1)} C",
-                                              style: const TextStyle(
-                                                  fontSize: 46,
-                                                  color: Colors.white),
-                                            ),
-                                            const IconButton(
-                                              onPressed: null,
-                                              icon: Icon(Icons.water_drop),
-                                              iconSize: 40,
-                                              color: Colors.white,
-                                            ),
-                                            Text(
-                                              "${_data[0].humidity!.toStringAsFixed(1)} %",
-                                              style: const TextStyle(
-                                                  fontSize: 46,
-                                                  color: Colors.white),
-                                            ),
-                                          ],
-                                        ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
-                                          children: [
-                                            Text(
-                                              "Min:${_data[0].tempMin!.celsius!.toStringAsFixed(1)}",
-                                              style: const TextStyle(
-                                                  fontSize: 20,
-                                                  color: Colors.white),
-                                            ),
-                                            const Padding(
-                                                padding: EdgeInsets.only(
-                                                    left: 5,
-                                                    right: 5,
-                                                    top: 20)),
-                                            Text(
-                                              "Max:${_data[0].tempMax!.celsius!.toStringAsFixed(1)}",
-                                              style: const TextStyle(
-                                                  fontSize: 20,
-                                                  color: Colors.white),
-                                            ),
-                                          ],
-                                        ),
-                                        const Padding(
-                                            padding: EdgeInsets.only(top: 5)),
-                                        Row(
-                                          children: [
-                                            Text(
-                                              "Feel like ${_data[0].tempFeelsLike!.celsius!.toStringAsFixed(1)}",
-                                              style: const TextStyle(
-                                                  fontSize: 20,
-                                                  color: Colors.white),
-                                            ),
-                                            const Padding(
-                                                padding:
-                                                    EdgeInsets.only(left: 10)),
-                                            const IconButton(
-                                              onPressed: null,
-                                              icon: Icon(Icons.air_outlined),
-                                              iconSize: 40,
-                                              color: Colors.white,
-                                            ),
-                                            Text(
-                                              "${_data[0].windSpeed}",
-                                              style: const TextStyle(
-                                                  fontSize: 20,
-                                                  color: Colors.white),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                    const Padding(
-                                        padding: EdgeInsets.only(left: 10)),
-                                    Column(
+                                    Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
+                                        const SizedBox(
+                                            height: 40,
+                                            child: Image(
+                                              image: AssetImage("sunrise.png"),
+                                            )),
                                         Text(
-                                          "${_data[0].weatherDescription}",
-                                          style: const TextStyle(
-                                              fontSize: 25,
-                                              color: Colors.white),
-                                        ),
-                                        Image.network(
-                                            'http://openweathermap.org/img/w/${_data[0].weatherIcon}.png',
-                                            height: 100,
-                                            fit: BoxFit.cover),
+                                            "${_data[0].sunrise!.hour}:${_data[0].sunrise!.minute.toString().padLeft(2, '0')}:${_data[0].sunrise!.second.toString().padLeft(2, '0')}"),
+                                        const Padding(
+                                            padding: EdgeInsets.only(left: 20)),
+                                        const SizedBox(
+                                            height: 40,
+                                            child: Image(
+                                              image: AssetImage("sunset.png"),
+                                            )),
+                                        Text(
+                                            "${_data[0].sunset!.hour}:${_data[0].sunset!.minute.toString().padLeft(2, '0')}:${_data[0].sunset!.second.toString().padLeft(2, '0')}"),
                                       ],
-                                    )
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text(
+                                        "$outputDate",
+                                        style: const TextStyle(
+                                            fontSize: 20, color: Colors.white),
+                                      ),
+                                    ),
                                   ],
-                                ),
-                              ),
+                                )
+                              : Container(),
 
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  const SizedBox(
-                                      height: 40,
-                                      child: Image(
-                                        image: AssetImage("sunrise.png"),
-                                      )),
-                                  Text(
-                                      "${_data[0].sunrise!.hour}:${_data[0].sunrise!.minute.toString().padLeft(2, '0')}:${_data[0].sunrise!.second.toString().padLeft(2, '0')}"),
-                                  const Padding(
-                                      padding: EdgeInsets.only(left: 20)),
-                                  const SizedBox(
-                                      height: 40,
-                                      child: Image(
-                                        image: AssetImage("sunset.png"),
-                                      )),
-                                  Text(
-                                      "${_data[0].sunset!.hour}:${_data[0].sunset!.minute.toString().padLeft(2, '0')}:${_data[0].sunset!.second.toString().padLeft(2, '0')}"),
-                                ],
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                  "$outputDate",
-                                  style: const TextStyle(
-                                      fontSize: 20, color: Colors.white),
-                                ),
-                              ),
-                              // IconButton(
-                              //     // Display a Wind icon facing towards east
-                              //     icon: WindIcon.towards_n,
-                              //     iconSize: 30,
-                              //     onPressed: () {}),
-                              // weatherIconCode("${_data[0].weatherIcon}"),
-                              // Text("$outputDate"),
+                          // IconButton(
+                          //     // Display a Wind icon facing towards east
+                          //     icon: WindIcon.towards_n,
+                          //     iconSize: 30,
+                          //     onPressed: () {}),
+                          // weatherIconCode("${_data[0].weatherIcon}"),
+                          // Text("$outputDate"),
 
-                              // Expanded(child: Text(txtError)),
-                            ],
-                          )
-                        : Container(),
-                  ),
+                          // Expanded(child: Text(txtError)),
+                        ],
+                      )),
                   // const Divider(),
                   const Text(
                     "Forecast",
