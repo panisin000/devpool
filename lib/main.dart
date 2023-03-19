@@ -279,7 +279,7 @@ class _MyAppState extends State<MyApp> {
         children: <Widget>[
           Text(
             'City ($place) not found',
-            style: TextStyle(fontSize: 40),
+            style: const TextStyle(fontSize: 40),
           ),
         ],
       ),
