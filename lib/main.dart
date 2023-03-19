@@ -177,75 +177,83 @@ class _MyAppState extends State<MyApp> {
   }
 
   Widget contentFinishedDownload(List<Weather> data) {
-    return SizedBox(
-      height: 150,
-      // width: 500,
-      // constraints: BoxConstraints(
-      //                     // maxHeight: MediaQuery.of(context).size.height / 4,
-      //                     maxWidth: 200,
-      //                   ),
-      child: PageView.builder(
-          itemCount: data.length,
-          controller: PageController(viewportFraction: 0.3),
-          onPageChanged: (int index) => setState(() => _index = index),
-          itemBuilder: (_, i) {
-            return Transform.scale(
-                scale: i == _index ? 1 : 0.9,
-                child: Card(
-                  color: const Color(0xff955cd1),
-                  elevation: 5,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Padding(padding: EdgeInsets.only(top: 5)),
-                      Center(
-                        child: Text(
-                          "${data[_index].date!.day}/${data[_index].date!.month}/${data[_index].date!.year} ${data[_index].date!.hour}:${data[_index].date!.minute == 0 ? '00' : data[_index].date!.minute}",
-                          style: const TextStyle(
-                              fontSize: 14, color: Colors.white),
-                        ),
+    return PageView.builder(
+        itemCount: data.length,
+        controller: PageController(viewportFraction: 0.3),
+        onPageChanged: (int index) => setState(() => _index = index),
+        itemBuilder: (_, i) {
+          return Transform.scale(
+              scale: i == _index ? 1 : 0.9,
+              child: Card(
+                color: const Color(0xff955cd1),
+                elevation: 5,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20)),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Padding(padding: EdgeInsets.only(top: 5)),
+                    Center(
+                      child: Text(
+                        "${data[_index].date!.day}/${data[_index].date!.month}/${data[_index].date!.year} ${data[_index].date!.hour.toString().padLeft(2, '0')}:${data[_index].date!.minute.toString().padLeft(2, '0')}",
+                        style:
+                            const TextStyle(fontSize: 14, color: Colors.white),
                       ),
-                      const Padding(padding: EdgeInsets.only(top: 2)),
-                      Center(
-                        child: Text(
-                          "${data[_index].temperature}",
-                          style: const TextStyle(
-                              fontSize: 25, color: Colors.white),
-                        ),
-                      ),
-                      Row(
+                    ),
+                    const Padding(padding: EdgeInsets.only(top: 2)),
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
                         mainAxisSize: MainAxisSize.min,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
+                          const IconButton(
+                              onPressed: null, icon: Icon(Icons.thermostat)),
                           Text(
-                            "${_data[0].weatherDescription}",
+                            "${data[_index].temperature!.celsius!.toStringAsFixed(1)} C",
                             style: const TextStyle(
-                                fontSize: 15, color: Colors.white),
+                                fontSize: 25, color: Colors.white),
                           ),
-                          Image.network(
-                              'http://openweathermap.org/img/w/${_data[0].weatherIcon}.png',
-                              height: 50,
-                              fit: BoxFit.cover),
+                          const IconButton(
+                              onPressed: null, icon: Icon(Icons.water_drop)),
+                          Text(
+                            "${data[_index].humidity} %",
+                            style: const TextStyle(
+                                fontSize: 25, color: Colors.white),
+                          ),
                         ],
                       ),
-                    ],
-                  ),
-                ));
-            // child: ListView.separated(
-            //   itemCount: data.length,
-            //   itemBuilder: (context, index) {
-            //     return ListTile(
-            //       title: Text(data[index].toString()),
-            //     );
-            //   },
-            //   separatorBuilder: (context, index) {
-            //     return const Divider();
-            //   },
-            // ),
-          }),
-    );
+                    ),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "${_data[0].weatherDescription}",
+                          style: const TextStyle(
+                              fontSize: 15, color: Colors.white),
+                        ),
+                        Image.network(
+                            'http://openweathermap.org/img/w/${_data[0].weatherIcon}.png',
+                            height: 50,
+                            fit: BoxFit.cover),
+                      ],
+                    ),
+                  ],
+                ),
+              ));
+          // child: ListView.separated(
+          //   itemCount: data.length,
+          //   itemBuilder: (context, index) {
+          //     return ListTile(
+          //       title: Text(data[index].toString()),
+          //     );
+          //   },
+          //   separatorBuilder: (context, index) {
+          //     return const Divider();
+          //   },
+          // ),
+        });
   }
 
   Widget contentDownloading() {
@@ -429,19 +437,34 @@ class _MyAppState extends State<MyApp> {
               primarySwatch: Colors.deepPurple,
             ),
             home: Scaffold(
-              // drawer: drawer,
+              drawer: Drawer(
+                  child: Column(
+                children: [
+                  Container(
+                    color: Colors.deepPurpleAccent,
+                    padding: const EdgeInsets.all(10),
+                    height: 100,
+                    width: 500,
+                    child: const Center(
+                        child: Text(
+                      "Devpool Weather",
+                      style: TextStyle(color: Colors.white),
+                    )),
+                  ),
+                ],
+              )),
               appBar: AppBar(
                 title: const Text('Weather Example App'),
-                backgroundColor: Colors.deepPurpleAccent,
-                leading: IconButton(
-                  onPressed: drawerMenu,
-                  icon: const Icon(Icons.menu),
-                ),
+                backgroundColor: const Color(0xff955cd1),
+                // leading: IconButton(
+                //   onPressed: drawerMenu,
+                //   icon: const Icon(Icons.menu),
+                // ),
               ),
               body: Column(
                 children: [
                   Container(
-                    height: 450,
+                    height: 440,
                     // width: size.width,
                     margin: const EdgeInsets.only(right: 10, left: 10),
                     decoration: const BoxDecoration(
@@ -468,7 +491,7 @@ class _MyAppState extends State<MyApp> {
                               //   style: TextStyle(fontSize: 20,color: Colors.white),
                               // ),
                               const Divider(
-                                height: 20.0,
+                                // height: 20.0,
                                 thickness: 2.0,
                               ),
                               SingleChildScrollView(
@@ -512,6 +535,18 @@ class _MyAppState extends State<MyApp> {
                                             ),
                                             Text(
                                               "${_data[0].temperature!.celsius!.toStringAsFixed(1)} C",
+                                              style: const TextStyle(
+                                                  fontSize: 46,
+                                                  color: Colors.white),
+                                            ),
+                                            const IconButton(
+                                              onPressed: null,
+                                              icon: Icon(Icons.water_drop),
+                                              iconSize: 40,
+                                              color: Colors.white,
+                                            ),
+                                            Text(
+                                              "${_data[0].humidity!.toStringAsFixed(1)} %",
                                               style: const TextStyle(
                                                   fontSize: 46,
                                                   color: Colors.white),
@@ -601,7 +636,7 @@ class _MyAppState extends State<MyApp> {
                                         image: AssetImage("sunrise.png"),
                                       )),
                                   Text(
-                                      "${_data[0].sunrise!.hour}:${_data[0].sunrise!.minute == 0 ? '00' : _data[0].sunrise!.minute}:${_data[0].sunrise!.second == 0 ? '00' : _data[0].sunrise!.second}"),
+                                      "${_data[0].sunrise!.hour}:${_data[0].sunrise!.minute.toString().padLeft(2, '0')}:${_data[0].sunrise!.second.toString().padLeft(2, '0')}"),
                                   const Padding(
                                       padding: EdgeInsets.only(left: 20)),
                                   const SizedBox(
@@ -610,7 +645,7 @@ class _MyAppState extends State<MyApp> {
                                         image: AssetImage("sunset.png"),
                                       )),
                                   Text(
-                                      "${_data[0].sunset!.hour}:${_data[0].sunset!.minute == 0 ? '00' : _data[0].sunset!.minute}:${_data[0].sunset!.second == 0 ? '00' : _data[0].sunset!.second}"),
+                                      "${_data[0].sunset!.hour}:${_data[0].sunset!.minute.toString().padLeft(2, '0')}:${_data[0].sunset!.second.toString().padLeft(2, '0')}"),
                                 ],
                               ),
                               Padding(
@@ -634,7 +669,7 @@ class _MyAppState extends State<MyApp> {
                           )
                         : Container(),
                   ),
-                  const Divider(),
+                  // const Divider(),
                   const Text(
                     "Forecast",
                     style: TextStyle(color: Colors.deepPurple, fontSize: 20),
@@ -649,7 +684,7 @@ class _MyAppState extends State<MyApp> {
             home: Scaffold(
               appBar: AppBar(
                   title: const Text("Loading"),
-                  backgroundColor: Colors.deepPurpleAccent),
+                  backgroundColor: const Color(0xff955cd1)),
               body: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: const [
