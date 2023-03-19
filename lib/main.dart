@@ -37,7 +37,7 @@ class _MyAppState extends State<MyApp> {
   var inputFormat = DateFormat('dd/MM/yyyy HH:mm');
   final newFormatter = DateFormat("dd MMM yyyy HH:mm");
   bool loaded = false;
-  int index = 0;
+  int _index = 0;
   String weatherCode = "";
 
   // Object get index => 0;
@@ -177,40 +177,74 @@ class _MyAppState extends State<MyApp> {
   }
 
   Widget contentFinishedDownload(List<Weather> data) {
-    return Center(
-      child: Card(
-        color: Colors.cyanAccent,
-        child: PageView.builder(
-            itemCount: data.length,
-            controller: PageController(viewportFraction: 0.7),
-            onPageChanged: (int index) => setState(() => index = index),
-            itemBuilder: (_, i) {
-              return Transform.scale(
-                  scale: i == index ? 1 : 0.9,
-                  child: Card(
-                    elevation: 6,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                    child: Center(
-                      child: Text(
-                        "${data[index].toString()}",
-                        style: const TextStyle(fontSize: 20),
+    return SizedBox(
+      height: 150,
+      // width: 500,
+      // constraints: BoxConstraints(
+      //                     // maxHeight: MediaQuery.of(context).size.height / 4,
+      //                     maxWidth: 200,
+      //                   ),
+      child: PageView.builder(
+          itemCount: data.length,
+          controller: PageController(viewportFraction: 0.3),
+          onPageChanged: (int index) => setState(() => _index = index),
+          itemBuilder: (_, i) {
+            return Transform.scale(
+                scale: i == _index ? 1 : 0.9,
+                child: Card(
+                  color: const Color(0xff955cd1),
+                  elevation: 5,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Padding(padding: EdgeInsets.only(top: 5)),
+                      Center(
+                        child: Text(
+                          "${data[_index].date!.day}/${data[_index].date!.month}/${data[_index].date!.year} ${data[_index].date!.hour}:${data[_index].date!.minute == 0 ? '00' : data[_index].date!.minute}",
+                          style: const TextStyle(
+                              fontSize: 14, color: Colors.white),
+                        ),
                       ),
-                    ),
-                  ));
-              // child: ListView.separated(
-              //   itemCount: data.length,
-              //   itemBuilder: (context, index) {
-              //     return ListTile(
-              //       title: Text(data[index].toString()),
-              //     );
-              //   },
-              //   separatorBuilder: (context, index) {
-              //     return const Divider();
-              //   },
-              // ),
-            }),
-      ),
+                      const Padding(padding: EdgeInsets.only(top: 2)),
+                      Center(
+                        child: Text(
+                          "${data[_index].temperature}",
+                          style: const TextStyle(
+                              fontSize: 25, color: Colors.white),
+                        ),
+                      ),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "${_data[0].weatherDescription}",
+                            style: const TextStyle(
+                                fontSize: 15, color: Colors.white),
+                          ),
+                          Image.network(
+                              'http://openweathermap.org/img/w/${_data[0].weatherIcon}.png',
+                              height: 50,
+                              fit: BoxFit.cover),
+                        ],
+                      ),
+                    ],
+                  ),
+                ));
+            // child: ListView.separated(
+            //   itemCount: data.length,
+            //   itemBuilder: (context, index) {
+            //     return ListTile(
+            //       title: Text(data[index].toString()),
+            //     );
+            //   },
+            //   separatorBuilder: (context, index) {
+            //     return const Divider();
+            //   },
+            // ),
+          }),
     );
   }
 
@@ -407,7 +441,7 @@ class _MyAppState extends State<MyApp> {
               body: Column(
                 children: [
                   Container(
-                    height: 460,
+                    height: 450,
                     // width: size.width,
                     margin: const EdgeInsets.only(right: 10, left: 10),
                     decoration: const BoxDecoration(
@@ -567,7 +601,7 @@ class _MyAppState extends State<MyApp> {
                                         image: AssetImage("sunrise.png"),
                                       )),
                                   Text(
-                                      "${_data[0].sunrise!.hour}:${_data[0].sunrise!.minute}:${_data[0].sunrise!.second}"),
+                                      "${_data[0].sunrise!.hour}:${_data[0].sunrise!.minute == 0 ? '00' : _data[0].sunrise!.minute}:${_data[0].sunrise!.second == 0 ? '00' : _data[0].sunrise!.second}"),
                                   const Padding(
                                       padding: EdgeInsets.only(left: 20)),
                                   const SizedBox(
@@ -576,7 +610,7 @@ class _MyAppState extends State<MyApp> {
                                         image: AssetImage("sunset.png"),
                                       )),
                                   Text(
-                                      "${_data[0].sunset!.hour}:${_data[0].sunset!.minute}:${_data[0].sunset!.second}"),
+                                      "${_data[0].sunset!.hour}:${_data[0].sunset!.minute == 0 ? '00' : _data[0].sunset!.minute}:${_data[0].sunset!.second == 0 ? '00' : _data[0].sunset!.second}"),
                                 ],
                               ),
                               Padding(
@@ -601,7 +635,10 @@ class _MyAppState extends State<MyApp> {
                         : Container(),
                   ),
                   const Divider(),
-                  const Text("Forecast"),
+                  const Text(
+                    "Forecast",
+                    style: TextStyle(color: Colors.deepPurple, fontSize: 20),
+                  ),
                   Expanded(child: _resultView()),
                 ],
               ),
