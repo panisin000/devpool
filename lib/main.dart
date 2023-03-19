@@ -26,6 +26,7 @@ class _MyAppState extends State<MyApp> {
   late WeatherFactory ws;
   late Weather weather;
   List<Weather> _data = [];
+  List<Weather> _dataForecast = [];
   AppState _state = AppState.NOT_DOWNLOADED;
   double lat = 13.8527709;
   double lon = 99.5592319;
@@ -36,8 +37,10 @@ class _MyAppState extends State<MyApp> {
   var inputFormat = DateFormat('dd/MM/yyyy HH:mm');
   final newFormatter = DateFormat("dd MMM yyyy HH:mm");
   bool loaded = false;
-
+  int index = 0;
   String weatherCode = "";
+
+  // Object get index => 0;
 
   @override
   void initState() {
@@ -53,6 +56,7 @@ class _MyAppState extends State<MyApp> {
     var inputDate = inputFormat.parse(
         '${weather.date!.day}/${weather.date!.month}/${weather.date!.year} ${weather.date!.hour}:${weather.date!.month}');
     print("inputDate=>$inputDate");
+    queryForecast(true);
     setState(() {
       _data = [weather];
       loaded = true;
@@ -102,16 +106,25 @@ class _MyAppState extends State<MyApp> {
     return await Geolocator.getCurrentPosition();
   }
 
-  void queryForecast() async {
+  void queryForecast(bool latLon) async {
     /// Removes keyboard
     FocusScope.of(context).requestFocus(FocusNode());
+    // setState(() {
+    //   _state = AppState.DOWNLOADING;
+    // });
+    List<Weather> forecasts = [];
+    if (latLon) {
+      Position position = await _determinePosition();
+      setState(() {
+        lat = position.latitude;
+        lon = position.longitude;
+      });
+      forecasts = await ws.fiveDayForecastByLocation(lat, lon);
+    } else {
+      forecasts = await ws.fiveDayForecastByCityName(place);
+    }
     setState(() {
-      _state = AppState.DOWNLOADING;
-    });
-
-    List<Weather> forecasts = await ws.fiveDayForecastByLocation(lat, lon);
-    setState(() {
-      _data = forecasts;
+      _dataForecast = forecasts;
       _state = AppState.FINISHED_DOWNLOADING;
     });
   }
@@ -163,18 +176,40 @@ class _MyAppState extends State<MyApp> {
     // print("${_data.}");
   }
 
-  Widget contentFinishedDownload() {
+  Widget contentFinishedDownload(List<Weather> data) {
     return Center(
-      child: ListView.separated(
-        itemCount: _data.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-            title: Text(_data[index].toString()),
-          );
-        },
-        separatorBuilder: (context, index) {
-          return const Divider();
-        },
+      child: Card(
+        color: Colors.cyanAccent,
+        child: PageView.builder(
+            itemCount: data.length,
+            controller: PageController(viewportFraction: 0.7),
+            onPageChanged: (int index) => setState(() => index = index),
+            itemBuilder: (_, i) {
+              return Transform.scale(
+                  scale: i == index ? 1 : 0.9,
+                  child: Card(
+                    elevation: 6,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                    child: Center(
+                      child: Text(
+                        "${data[index].toString()}",
+                        style: const TextStyle(fontSize: 20),
+                      ),
+                    ),
+                  ));
+              // child: ListView.separated(
+              //   itemCount: data.length,
+              //   itemBuilder: (context, index) {
+              //     return ListTile(
+              //       title: Text(data[index].toString()),
+              //     );
+              //   },
+              //   separatorBuilder: (context, index) {
+              //     return const Divider();
+              //   },
+              // ),
+            }),
       ),
     );
   }
@@ -210,7 +245,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   Widget _resultView() => _state == AppState.FINISHED_DOWNLOADING
-      ? contentFinishedDownload()
+      ? contentFinishedDownload(_dataForecast)
       : _state == AppState.DOWNLOADING
           ? contentDownloading()
           : contentNotDownloaded();
@@ -372,7 +407,7 @@ class _MyAppState extends State<MyApp> {
               body: Column(
                 children: [
                   Container(
-                    height: 400,
+                    height: 460,
                     // width: size.width,
                     margin: const EdgeInsets.only(right: 10, left: 10),
                     decoration: const BoxDecoration(
@@ -389,22 +424,22 @@ class _MyAppState extends State<MyApp> {
                         tileMode: TileMode.mirror,
                       ),
                     ),
-                    child: Column(
-                      children: <Widget>[
-                        _coordinateInputs(),
-                        _buttons(),
-                        // const Text(
-                        //   'Output:',
-                        //   style: TextStyle(fontSize: 20,color: Colors.white),
-                        // ),
-                        const Divider(
-                          height: 20.0,
-                          thickness: 2.0,
-                        ),
-                        SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: _state == AppState.FINISHED_DOWNLOADING
-                              ? Row(
+                    child: _state == AppState.FINISHED_DOWNLOADING
+                        ? Column(
+                            children: <Widget>[
+                              _coordinateInputs(),
+                              _buttons(),
+                              // const Text(
+                              //   'Output:',
+                              //   style: TextStyle(fontSize: 20,color: Colors.white),
+                              // ),
+                              const Divider(
+                                height: 20.0,
+                                thickness: 2.0,
+                              ),
+                              SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
                                   children: [
                                     Padding(
                                       padding: const EdgeInsets.all(8.0),
@@ -423,22 +458,31 @@ class _MyAppState extends State<MyApp> {
                                       ),
                                     ),
                                   ],
-                                )
-                              : Container(),
-                        ),
-                        SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: _state == AppState.FINISHED_DOWNLOADING
-                              ? Row(
+                                ),
+                              ),
+                              SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Column(
                                       children: [
-                                        Text(
-                                          "${_data[0].temperature!.celsius!.toStringAsFixed(1)} C",
-                                          style: const TextStyle(
-                                              fontSize: 46,
-                                              color: Colors.white),
+                                        Row(
+                                          children: [
+                                            const IconButton(
+                                              onPressed: null,
+                                              icon: Icon(
+                                                  Icons.thermostat_outlined),
+                                              iconSize: 50,
+                                              color: Colors.white,
+                                            ),
+                                            Text(
+                                              "${_data[0].temperature!.celsius!.toStringAsFixed(1)} C",
+                                              style: const TextStyle(
+                                                  fontSize: 46,
+                                                  color: Colors.white),
+                                            ),
+                                          ],
                                         ),
                                         Row(
                                           mainAxisAlignment:
@@ -465,11 +509,30 @@ class _MyAppState extends State<MyApp> {
                                         ),
                                         const Padding(
                                             padding: EdgeInsets.only(top: 5)),
-                                        Text(
-                                          "Feel like ${_data[0].tempFeelsLike!.celsius!.toStringAsFixed(1)}",
-                                          style: const TextStyle(
-                                              fontSize: 20,
-                                              color: Colors.white),
+                                        Row(
+                                          children: [
+                                            Text(
+                                              "Feel like ${_data[0].tempFeelsLike!.celsius!.toStringAsFixed(1)}",
+                                              style: const TextStyle(
+                                                  fontSize: 20,
+                                                  color: Colors.white),
+                                            ),
+                                            const Padding(
+                                                padding:
+                                                    EdgeInsets.only(left: 10)),
+                                            const IconButton(
+                                              onPressed: null,
+                                              icon: Icon(Icons.air_outlined),
+                                              iconSize: 40,
+                                              color: Colors.white,
+                                            ),
+                                            Text(
+                                              "${_data[0].windSpeed}",
+                                              style: const TextStyle(
+                                                  fontSize: 20,
+                                                  color: Colors.white),
+                                            ),
+                                          ],
                                         ),
                                       ],
                                     ),
@@ -492,32 +555,53 @@ class _MyAppState extends State<MyApp> {
                                       ],
                                     )
                                   ],
-                                )
-                              : Container(),
-                        ),
-                        _state == AppState.FINISHED_DOWNLOADING
-                            ? Padding(
+                                ),
+                              ),
+
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const SizedBox(
+                                      height: 40,
+                                      child: Image(
+                                        image: AssetImage("sunrise.png"),
+                                      )),
+                                  Text(
+                                      "${_data[0].sunrise!.hour}:${_data[0].sunrise!.minute}:${_data[0].sunrise!.second}"),
+                                  const Padding(
+                                      padding: EdgeInsets.only(left: 20)),
+                                  const SizedBox(
+                                      height: 40,
+                                      child: Image(
+                                        image: AssetImage("sunset.png"),
+                                      )),
+                                  Text(
+                                      "${_data[0].sunset!.hour}:${_data[0].sunset!.minute}:${_data[0].sunset!.second}"),
+                                ],
+                              ),
+                              Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Text(
                                   "$outputDate",
                                   style: const TextStyle(
                                       fontSize: 20, color: Colors.white),
                                 ),
-                              )
-                            : Container(),
-                        // IconButton(
-                        //     // Display a Wind icon facing towards east
-                        //     icon: WindIcon.towards_n,
-                        //     iconSize: 30,
-                        //     onPressed: () {}),
-                        // weatherIconCode("${_data[0].weatherIcon}"),
-                        // Text("$outputDate"),
+                              ),
+                              // IconButton(
+                              //     // Display a Wind icon facing towards east
+                              //     icon: WindIcon.towards_n,
+                              //     iconSize: 30,
+                              //     onPressed: () {}),
+                              // weatherIconCode("${_data[0].weatherIcon}"),
+                              // Text("$outputDate"),
 
-                        // Expanded(child: Text(txtError)),
-                      ],
-                    ),
+                              // Expanded(child: Text(txtError)),
+                            ],
+                          )
+                        : Container(),
                   ),
                   const Divider(),
+                  const Text("Forecast"),
                   Expanded(child: _resultView()),
                 ],
               ),
@@ -543,8 +627,8 @@ class _MyAppState extends State<MyApp> {
   Widget drawerMenu() {
     return Drawer(
       child: Column(
-        children: [
-          const Text("data from openweathermap"),
+        children: const [
+          Text("data from openweathermap"),
         ],
       ),
     );
