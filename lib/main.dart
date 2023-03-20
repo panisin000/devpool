@@ -198,6 +198,7 @@ class _MyAppState extends State<MyApp> {
     } else {
       forecasts = await ws.fiveDayForecastByCityName(place);
     }
+    print("forecasts=>${forecasts.toString()}");
     setState(() {
       _dataForecast = forecasts;
       _state = AppState.FINISHED_DOWNLOADING;
@@ -270,9 +271,14 @@ class _MyAppState extends State<MyApp> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       const Padding(padding: EdgeInsets.only(top: 5)),
+                      // Text(
+                      //   "${data[i].date}",
+                      //   style:
+                      //       const TextStyle(fontSize: 14, color: Colors.white),
+                      // ),
                       Center(
                         child: Text(
-                          "${data[_index].date!.day}/${data[_index].date!.month}/${data[_index].date!.year} ${data[_index].date!.hour.toString().padLeft(2, '0')}:${data[_index].date!.minute.toString().padLeft(2, '0')}",
+                          "${data[i].date!.day}/${data[i].date!.month}/${data[i].date!.year} ${data[i].date!.hour.toString().padLeft(2, '0')}:${data[i].date!.minute.toString().padLeft(2, '0')}",
                           style: const TextStyle(
                               fontSize: 14, color: Colors.white),
                         ),
@@ -549,7 +555,7 @@ class _MyAppState extends State<MyApp> {
                 child: Column(
                   children: [
                     Expanded(
-                      flex: 4,
+                      flex: 6,
                       child: buildScrollingView(
                         Axis.vertical,
                         scrollControllerVertical,
@@ -565,7 +571,7 @@ class _MyAppState extends State<MyApp> {
                         ),
                       ),
                     ),
-                    Expanded(child: _resultView()),
+                    Expanded(child: _resultView(), flex: 2),
                   ],
                 ),
               ),
@@ -595,15 +601,15 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
-  Widget drawerMenu() {
-    return Drawer(
-      child: Column(
-        children: const [
-          Text("data from openweathermap"),
-        ],
-      ),
-    );
-  }
+  // Widget drawerMenu() {
+  //   return Drawer(
+  //     child: Column(
+  //       children: const [
+  //         Text("data from openweathermap"),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget buildScrollingView(Axis axis, ScrollController controller) {
     return ImprovedScrolling(
@@ -665,7 +671,7 @@ class _MyAppState extends State<MyApp> {
 
     return [
       Container(
-        // height: 430,
+        height: 430,
         margin: const EdgeInsets.only(right: 10, left: 10),
         decoration: const BoxDecoration(
           borderRadius: BorderRadius.horizontal(
