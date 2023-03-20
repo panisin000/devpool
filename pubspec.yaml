@@ -39,6 +39,7 @@ dependencies:
   intl: ^0.18.0
   weather_animation: ^0.0.2
   flutter_web_frame: ^0.0.3
+  flutter_improved_scrolling: ^0.0.3
 
 
 dev_dependencies:
