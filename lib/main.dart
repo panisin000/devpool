@@ -11,10 +11,37 @@ import 'package:intl/intl.dart';
 import 'package:weather_icons/weather_icons.dart';
 import 'package:weather_animation/weather_animation.dart';
 // import 'package:weather_icons/weather_icons.dart';
+import 'package:flutter_web_frame/flutter_web_frame.dart';
 
 enum AppState { NOT_DOWNLOADED, DOWNLOADING, FINISHED_DOWNLOADING }
 
-void main() => runApp(MyApp());
+void main() {
+  // final runnableApp = _buildRunnableApp(
+  //   isWeb: true,
+  //   webAppWidth: 480.0,
+  //   app: MyApp(),
+  // );
+  runApp(MyApp());
+}
+
+Widget _buildRunnableApp({
+  required bool isWeb,
+  required double webAppWidth,
+  required Widget app,
+}) {
+  if (!isWeb) {
+    return app;
+  }
+
+  return Center(
+    child: ClipRect(
+      child: SizedBox(
+        width: webAppWidth,
+        child: app,
+      ),
+    ),
+  );
+}
 
 class MyApp extends StatefulWidget {
   @override
@@ -438,248 +465,264 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     if (loaded) {
-      return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          primarySwatch: Colors.deepPurple,
-        ),
-        home: Scaffold(
-          drawer: Drawer(
-              child: Column(
-            children: [
-              Container(
-                color: Colors.deepPurpleAccent,
-                padding: const EdgeInsets.all(10),
-                height: 100,
-                width: 500,
-                child: const Center(
-                    child: Text(
-                  "Devpool Weather",
-                  style: TextStyle(color: Colors.white),
-                )),
-              ),
-            ],
-          )),
-          appBar: AppBar(
-            title: const Text('Weather Example App'),
-            backgroundColor: const Color(0xff955cd1),
-            // leading: IconButton(
-            //   onPressed: drawerMenu,
-            //   icon: const Icon(Icons.menu),
-            // ),
-          ),
-          body: SafeArea(
-            child: Column(
-              children: [
-                Container(
-                  // height: 440,
-                  margin: const EdgeInsets.only(right: 10, left: 10),
-                  decoration: const BoxDecoration(
-                    borderRadius: BorderRadius.horizontal(
-                        left: Radius.circular(20), right: Radius.circular(20)),
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: <Color>[
-                        Color(0xff3fa2fa),
-                        Color(0xff955cd1),
-                      ], // Gradient from https://learnui.design/tools/gradient-generator.html
-                      tileMode: TileMode.mirror,
-                    ),
-                  ),
+      return FlutterWebFrame(
+        builder: (context) {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData(
+              primarySwatch: Colors.deepPurple,
+            ),
+            home: Scaffold(
+              drawer: Drawer(
                   child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      _coordinateInputs(),
-                      _buttons(),
-                      _state == AppState.FINISHED_DOWNLOADING
-                          ? Column(
-                              children: [
-                                const Divider(
-                                  // height: 20.0,
-                                  thickness: 2.0,
-                                ),
-                                SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: Row(
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.only(left: 5),
-                                        child: Text(
-                                          "${_data[0].areaName},",
-                                          style: const TextStyle(
-                                              fontSize: 38,
-                                              color: Colors.white),
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Text(
-                                          "${_data[0].country}",
-                                          style: const TextStyle(
-                                              fontSize: 38,
-                                              color: Colors.white),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Column(
+                children: [
+                  Container(
+                    color: Colors.deepPurpleAccent,
+                    padding: const EdgeInsets.all(10),
+                    height: 100,
+                    width: 500,
+                    child: const Center(
+                        child: Text(
+                      "Devpool Weather",
+                      style: TextStyle(color: Colors.white),
+                    )),
+                  ),
+                ],
+              )),
+              appBar: AppBar(
+                title: const Text('Weather Example App'),
+                backgroundColor: const Color(0xff955cd1),
+                // leading: IconButton(
+                //   onPressed: drawerMenu,
+                //   icon: const Icon(Icons.menu),
+                // ),
+              ),
+              body: SafeArea(
+                child: Column(
+                  children: [
+                    Container(
+                      // height: 440,
+                      margin: const EdgeInsets.only(right: 10, left: 10),
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.horizontal(
+                            left: Radius.circular(20),
+                            right: Radius.circular(20)),
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: <Color>[
+                            Color(0xff3fa2fa),
+                            Color(0xff955cd1),
+                          ], // Gradient from https://learnui.design/tools/gradient-generator.html
+                          tileMode: TileMode.mirror,
+                        ),
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _coordinateInputs(),
+                          _buttons(),
+                          _state == AppState.FINISHED_DOWNLOADING
+                              ? Column(
+                                  children: [
+                                    const Divider(
+                                      // height: 20.0,
+                                      thickness: 2.0,
+                                    ),
+                                    SingleChildScrollView(
+                                      scrollDirection: Axis.horizontal,
+                                      child: Row(
                                         children: [
-                                          Row(
-                                            children: [
-                                              const IconButton(
-                                                onPressed: null,
-                                                icon: Icon(
-                                                    Icons.thermostat_outlined),
-                                                iconSize: 50,
-                                                color: Colors.white,
-                                              ),
-                                              Text(
-                                                "${_data[0].temperature!.celsius!.toStringAsFixed(1)} C",
-                                                style: const TextStyle(
-                                                    fontSize: 46,
-                                                    color: Colors.white),
-                                              ),
-                                              const IconButton(
-                                                onPressed: null,
-                                                icon: Icon(Icons.water_drop),
-                                                iconSize: 40,
-                                                color: Colors.white,
-                                              ),
-                                              Text(
-                                                "${_data[0].humidity!.toStringAsFixed(1)} %",
-                                                style: const TextStyle(
-                                                    fontSize: 46,
-                                                    color: Colors.white),
-                                              ),
-                                            ],
+                                          Padding(
+                                            padding:
+                                                const EdgeInsets.only(left: 5),
+                                            child: Text(
+                                              "${_data[0].areaName},",
+                                              style: const TextStyle(
+                                                  fontSize: 38,
+                                                  color: Colors.white),
+                                            ),
                                           ),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceEvenly,
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text(
+                                              "${_data[0].country}",
+                                              style: const TextStyle(
+                                                  fontSize: 38,
+                                                  color: Colors.white),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    SingleChildScrollView(
+                                      scrollDirection: Axis.horizontal,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Column(
                                             children: [
-                                              Text(
-                                                "Min:${_data[0].tempMin!.celsius!.toStringAsFixed(1)}",
-                                                style: const TextStyle(
-                                                    fontSize: 20,
-                                                    color: Colors.white),
+                                              Row(
+                                                children: [
+                                                  const IconButton(
+                                                    onPressed: null,
+                                                    icon: Icon(Icons
+                                                        .thermostat_outlined),
+                                                    iconSize: 50,
+                                                    color: Colors.white,
+                                                  ),
+                                                  Text(
+                                                    "${_data[0].temperature!.celsius!.toStringAsFixed(1)} C",
+                                                    style: const TextStyle(
+                                                        fontSize: 46,
+                                                        color: Colors.white),
+                                                  ),
+                                                  const IconButton(
+                                                    onPressed: null,
+                                                    icon:
+                                                        Icon(Icons.water_drop),
+                                                    iconSize: 40,
+                                                    color: Colors.white,
+                                                  ),
+                                                  Text(
+                                                    "${_data[0].humidity!.toStringAsFixed(1)} %",
+                                                    style: const TextStyle(
+                                                        fontSize: 46,
+                                                        color: Colors.white),
+                                                  ),
+                                                ],
+                                              ),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceEvenly,
+                                                children: [
+                                                  Text(
+                                                    "Min:${_data[0].tempMin!.celsius!.toStringAsFixed(1)}",
+                                                    style: const TextStyle(
+                                                        fontSize: 20,
+                                                        color: Colors.white),
+                                                  ),
+                                                  const Padding(
+                                                      padding: EdgeInsets.only(
+                                                          left: 5,
+                                                          right: 5,
+                                                          top: 20)),
+                                                  Text(
+                                                    "Max:${_data[0].tempMax!.celsius!.toStringAsFixed(1)}",
+                                                    style: const TextStyle(
+                                                        fontSize: 20,
+                                                        color: Colors.white),
+                                                  ),
+                                                ],
                                               ),
                                               const Padding(
-                                                  padding: EdgeInsets.only(
-                                                      left: 5,
-                                                      right: 5,
-                                                      top: 20)),
-                                              Text(
-                                                "Max:${_data[0].tempMax!.celsius!.toStringAsFixed(1)}",
-                                                style: const TextStyle(
-                                                    fontSize: 20,
-                                                    color: Colors.white),
+                                                  padding:
+                                                      EdgeInsets.only(top: 5)),
+                                              Row(
+                                                children: [
+                                                  Text(
+                                                    "Feel like ${_data[0].tempFeelsLike!.celsius!.toStringAsFixed(1)}",
+                                                    style: const TextStyle(
+                                                        fontSize: 20,
+                                                        color: Colors.white),
+                                                  ),
+                                                  const Padding(
+                                                      padding: EdgeInsets.only(
+                                                          left: 10)),
+                                                  const IconButton(
+                                                    onPressed: null,
+                                                    icon: Icon(
+                                                        Icons.air_outlined),
+                                                    iconSize: 40,
+                                                    color: Colors.white,
+                                                  ),
+                                                  Text(
+                                                    "${_data[0].windSpeed}",
+                                                    style: const TextStyle(
+                                                        fontSize: 20,
+                                                        color: Colors.white),
+                                                  ),
+                                                ],
                                               ),
                                             ],
                                           ),
                                           const Padding(
-                                              padding: EdgeInsets.only(top: 5)),
-                                          Row(
+                                              padding:
+                                                  EdgeInsets.only(left: 10)),
+                                          Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
                                             children: [
                                               Text(
-                                                "Feel like ${_data[0].tempFeelsLike!.celsius!.toStringAsFixed(1)}",
+                                                "${_data[0].weatherDescription}",
                                                 style: const TextStyle(
-                                                    fontSize: 20,
+                                                    fontSize: 25,
                                                     color: Colors.white),
                                               ),
-                                              const Padding(
-                                                  padding: EdgeInsets.only(
-                                                      left: 10)),
-                                              const IconButton(
-                                                onPressed: null,
-                                                icon: Icon(Icons.air_outlined),
-                                                iconSize: 40,
-                                                color: Colors.white,
-                                              ),
-                                              Text(
-                                                "${_data[0].windSpeed}",
-                                                style: const TextStyle(
-                                                    fontSize: 20,
-                                                    color: Colors.white),
+                                              Image.network(
+                                                'http://openweathermap.org/img/w/${_data[0].weatherIcon}.png',
+                                                height: 100,
+                                                // fit: BoxFit.cover
                                               ),
                                             ],
-                                          ),
+                                          )
                                         ],
                                       ),
-                                      const Padding(
-                                          padding: EdgeInsets.only(left: 10)),
-                                      Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Text(
-                                            "${_data[0].weatherDescription}",
-                                            style: const TextStyle(
-                                                fontSize: 25,
-                                                color: Colors.white),
-                                          ),
-                                          Image.network(
-                                            'http://openweathermap.org/img/w/${_data[0].weatherIcon}.png',
-                                            height: 100,
-                                            // fit: BoxFit.cover
-                                          ),
-                                        ],
-                                      )
-                                    ],
-                                  ),
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    const SizedBox(
-                                        height: 40,
-                                        child: Image(
-                                          image: AssetImage("sunrise.png"),
-                                        )),
-                                    Text(
-                                        "${_data[0].sunrise!.hour}:${_data[0].sunrise!.minute.toString().padLeft(2, '0')}:${_data[0].sunrise!.second.toString().padLeft(2, '0')}"),
-                                    const Padding(
-                                        padding: EdgeInsets.only(left: 20)),
-                                    const SizedBox(
-                                        height: 40,
-                                        child: Image(
-                                          image: AssetImage("sunset.png"),
-                                        )),
-                                    Text(
-                                        "${_data[0].sunset!.hour}:${_data[0].sunset!.minute.toString().padLeft(2, '0')}:${_data[0].sunset!.second.toString().padLeft(2, '0')}"),
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        const SizedBox(
+                                            height: 40,
+                                            child: Image(
+                                              image: AssetImage("sunrise.png"),
+                                            )),
+                                        Text(
+                                            "${_data[0].sunrise!.hour}:${_data[0].sunrise!.minute.toString().padLeft(2, '0')}:${_data[0].sunrise!.second.toString().padLeft(2, '0')}"),
+                                        const Padding(
+                                            padding: EdgeInsets.only(left: 20)),
+                                        const SizedBox(
+                                            height: 40,
+                                            child: Image(
+                                              image: AssetImage("sunset.png"),
+                                            )),
+                                        Text(
+                                            "${_data[0].sunset!.hour}:${_data[0].sunset!.minute.toString().padLeft(2, '0')}:${_data[0].sunset!.second.toString().padLeft(2, '0')}"),
+                                      ],
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text(
+                                        "$outputDate",
+                                        style: const TextStyle(
+                                            fontSize: 20, color: Colors.white),
+                                      ),
+                                    ),
                                   ],
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    "$outputDate",
-                                    style: const TextStyle(
-                                        fontSize: 20, color: Colors.white),
-                                  ),
-                                ),
-                              ],
-                            )
-                          : Container(),
-                      // const Divider(),
-                    ],
-                  ),
+                                )
+                              : Container(),
+                          // const Divider(),
+                        ],
+                      ),
+                    ),
+                    const Text(
+                      "Forecast",
+                      style: TextStyle(color: Colors.deepPurple, fontSize: 20),
+                    ),
+                    Expanded(child: _resultView()),
+                  ],
                 ),
-                const Text(
-                  "Forecast",
-                  style: TextStyle(color: Colors.deepPurple, fontSize: 20),
-                ),
-                Expanded(child: _resultView()),
-              ],
+              ),
             ),
-          ),
-        ),
-      );
+          );
+        },
+        maximumSize: const Size(1920.0, 1080.0), // Maximum size
+        enabled: true, // default is enable, when disable content is full size
+        // backgroundColor: Colors.grey,
+      ); // Background color/white space)
     } else {
       return MaterialApp(
         debugShowCheckedModeBanner: false,
