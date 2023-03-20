@@ -552,6 +552,25 @@ class _MyAppState extends State<MyApp> {
                                                   color: Colors.white),
                                             ),
                                           ),
+                                          // const Padding(
+                                          //     padding:
+                                          //         EdgeInsets.only(left: 10)),
+                                          Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                "${_data[0].weatherDescription}",
+                                                style: const TextStyle(
+                                                    fontSize: 25,
+                                                    color: Colors.white),
+                                              ),
+                                              Image.network(
+                                                  'http://openweathermap.org/img/w/${_data[0].weatherIcon}.png',
+                                                  // height: 100,
+                                                  fit: BoxFit.cover),
+                                            ],
+                                          )
                                         ],
                                       ),
                                     ),
@@ -648,26 +667,6 @@ class _MyAppState extends State<MyApp> {
                                               ),
                                             ],
                                           ),
-                                          const Padding(
-                                              padding:
-                                                  EdgeInsets.only(left: 10)),
-                                          Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Text(
-                                                "${_data[0].weatherDescription}",
-                                                style: const TextStyle(
-                                                    fontSize: 25,
-                                                    color: Colors.white),
-                                              ),
-                                              Image.network(
-                                                'http://openweathermap.org/img/w/${_data[0].weatherIcon}.png',
-                                                height: 100,
-                                                // fit: BoxFit.cover
-                                              ),
-                                            ],
-                                          )
                                         ],
                                       ),
                                     ),
